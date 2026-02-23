@@ -1,3 +1,8 @@
+body {
+  padding-top: 15vh;
+  padding-bottom: 10vh;
+}
+
 .App {
   text-align: center;
 }
