@@ -28,7 +28,7 @@ const Header = () => {
     };
 
     return (
-        <AppBar position="fixed" sx={{height: '15vh'}}>
+        <AppBar position="fixed" sx={{height: '20vh', maxHeight: '100px', minHeight: '60px'}}>
             <Container maxWidth="xl" sx={{height: '100%'}}>
                 <Toolbar disableGutters sx={{height: '100%'}}>
                     <Typography
@@ -37,7 +37,7 @@ const Header = () => {
                         component="a"
                         // href="#app-bar-with-responsive-menu"
                         sx={{
-                            display: 'flex',
+                            // display: 'flex',
                             fontFamily: 'Comic Sans MS',
                             fontWeight: 700,
                             letterSpacing: '.3rem',
