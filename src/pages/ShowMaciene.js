@@ -7,17 +7,37 @@ import Loading from '../components/Loading';
 // import {Jimp}from 'jimp';
 import UpIcon from '@mui/icons-material/FileUpload';
 import { Buffer } from 'buffer';
+import { httpsCallable } from 'firebase/functions';
+import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "firebase/app-check";
 // import React from 'react';
 
 const flag = typeof window !== 'undefined';
 let function_instance = null
-let functions = null
-let function_ini = null
+let function_ini = null;
 let reader = null;
 let documentInstance = null;
 if (flag) {
 	function_instance = getFirebaseIni()
-	functions = function_instance['functions']
+	console.log('Appcheck')
+	const appCheckInstance = initializeAppCheck(function_instance['firebase'], {
+		// 取得した reCAPTCHA v3 のサイトキー（公開キー）
+		provider: new ReCaptchaV3Provider("6Ldc4XgsAAAAAINpFRmQ-uQvCCPs6Xn888HT7qO4"),
+
+		// 自動的に App Check トークンをリフレッシュさせる（推奨）
+		isTokenAutoRefreshEnabled: true
+	});
+
+	// App Check トークンを取得して確認
+	async function checkAppCheck() {
+		try {
+			const tokenResponse = await getToken(appCheckInstance, false);
+			console.log("App Check Token:", tokenResponse.token);
+			console.log("Expires at:", new Date(tokenResponse.expireTimeMillis));
+		} catch (err) {
+			console.error("App Check token error:", err);
+		}
+	}
+	checkAppCheck();
 	function_ini = function_instance['functions_ini']
 	reader = new FileReader();
 	window.Buffer = window.Buffer || Buffer;
@@ -147,6 +167,12 @@ const ShowMaciene = () => {
 			const finalBase64 = rotatedCanvas.toDataURL('image/jpeg');
 
 			console.log('uploaded!', finalBase64);
+			const awaitTestUploader = await httpsCallable(function_ini, 'uploadImage', { timeout: 550 * 1000 });
+			
+			await awaitTestUploader({'image': finalBase64}).then(async (result) => {
+				let mes = result['data']
+				console.log(mes)
+			})
 
 			setAlign(0)
 			setImage(finalBase64)
