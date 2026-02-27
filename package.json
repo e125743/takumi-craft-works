@@ -13,6 +13,8 @@
     "@testing-library/user-event": "^13.5.0",
     "buffer": "^6.0.3",
     "firebase": "^12.9.0",
+    "firebase-admin": "^13.6.1",
+    "firebase-functions": "^7.0.6",
     "jimp": "^1.6.0",
     "pica": "^9.0.1",
     "react": "^19.2.4",
