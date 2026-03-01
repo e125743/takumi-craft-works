@@ -315,27 +315,27 @@ const ShowMaciene = () => {
 			console.log('uploaded!', finalBase64);
 			const awaitTestUploader = await httpsCallable(function_ini, 'uploadImage', { timeout: 550 * 1000 });
 
-			let today_on = new Date()
-			let year_in = today_on.getFullYear();
-			let month_in = ("0" + (today_on.getMonth() + 1)).slice(-2);
-			let date_in = ("0" + today_on.getDate()).slice(-2);
-			let hours_in = ("0" + today_on.getHours()).slice(-2);
-			let minutes_in = ("0" + today_on.getMinutes()).slice(-2);
-			let second_in = ("0" + today_on.getSeconds()).slice(-2);
-			console.log(year_in + '-' + month_in + '-' + date_in + 'T' + hours_in + ':' + minutes_in + ':' + second_in + 'Z')
+			// let today_on = new Date()
+			// let year_in = today_on.getFullYear();
+			// let month_in = ("0" + (today_on.getMonth() + 1)).slice(-2);
+			// let date_in = ("0" + today_on.getDate()).slice(-2);
+			// let hours_in = ("0" + today_on.getHours()).slice(-2);
+			// let minutes_in = ("0" + today_on.getMinutes()).slice(-2);
+			// let second_in = ("0" + today_on.getSeconds()).slice(-2);
+			// console.log(year_in + '-' + month_in + '-' + date_in + 'T' + hours_in + ':' + minutes_in + ':' + second_in + 'Z')
 
 			let insertData = {}
 			insertData['image'] = finalBase64
-			insertData['upImageTime'] = Timestamp.fromDate(year_in + '-' + month_in + '-' + date_in + 'T' + hours_in + ':' + minutes_in + ':' + second_in + 'Z')
+			insertData['upImageTime'] = Timestamp.fromDate(new Date())
 			
-			await awaitTestUploader({'image': finalBase64}).then(async (result) => {
+			await awaitTestUploader(insertData).then(async (result) => {
 				let mes = result['data']
 				console.log(mes)
 			})
 
 			setAlign(0)
 			setImage(finalBase64)
-			// setImage('')
+			setImage('')
 			console.log('uploaded!')
 			setDisabled(false)
 		} catch (err) {
