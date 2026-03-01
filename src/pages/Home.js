@@ -54,7 +54,7 @@ const Home = () => {
 						/>
 						<Typography
 							className="hoverText"
-							variant='h1'
+							variant={'h1'}
 							sx={{
 								position: "absolute",
 								top: "50%",
@@ -62,6 +62,8 @@ const Home = () => {
 								transform: "translate(-50%, -50%)",
 								opacity: 0,
 								transition: "opacity 0.3s ease",
+								fontSize: { xs: '50px', md: '100px' },
+    							fontWeight: { xs: 400, md: 600 },
 							}}
 						>
 							DetectDemo
