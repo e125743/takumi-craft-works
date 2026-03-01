@@ -116,6 +116,27 @@ exports.uploadImage = onCall(
         }
 })
 
+
+exports.updateStore = onCall(
+    {
+        // リクエスト出来るドメインを制限
+        cors: ["https://myproducts-488109.web.app", "https://myproducts-488109.firebaseapp.com", "http://localhost:3000"],
+        // AppCheck（認証されたドメインから以外のリクエストを拒否）
+        enforceAppCheck: true
+    },
+    async (data) => {
+        try {
+            let dics_ = data.data
+            await dics_.map(async (dic_) => {
+                await awaitInsertFirestore(dic_, 'DemoDetection', dic_.fileName)
+            })
+            return {message: 'success'}
+        } catch (error) {
+            console.log(error)
+            return {message: 'updateStoreError'}
+        }
+})
+
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
