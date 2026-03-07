@@ -1,8 +1,7 @@
 import getFirebaseIni from '../firebase';
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
-import { Button,IconButton, Box } from '@mui/material';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import {ReplayOutlined, CameraAlt, ArrowBack, ArrowForward} from '@mui/icons-material';
+import { Button, IconButton, Box, Pagination, PaginationItem } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Loading from '../components/Loading';
 // import {Jimp} from 'jimp';
@@ -11,16 +10,17 @@ import { Buffer } from 'buffer';
 import { httpsCallable } from 'firebase/functions';
 import { initializeAppCheck, ReCaptchaV3Provider, getToken } from "firebase/app-check";
 import MachieneImage from '../images/yolov8-test.jpg';
-import { Timestamp, getDocs, orderBy, query, collection } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
+import { Timestamp, getDocs, orderBy, query, collection, limit, startAfter, endBefore, limitToLast } from 'firebase/firestore';
+import { getDownloadURL, ref, getBlob } from 'firebase/storage';
 // import React from 'react';
 
 const columns = ['origine', 'detected', 'labels']
-const fields = ['origineImageURL', 'detectedImageURL']
+const fields = ['origineImageURL', 'detectedImageURL', 'labels']
 const storages = {
 	'origineImageURL': 'origineImages',
 	'detectedImageURL': 'detectedImages'
 }
+const recordByPage = 3;
 
 const flag = typeof window !== 'undefined';
 let function_instance = null
@@ -65,10 +65,13 @@ const ShowMaciene = () => {
 	const [align, setAlign] = useState(0);
 	const [dic, setDic] = useState({});
 	const [dicIds, setDicIds] = useState([]);
+	const [firstSnap, setFirstSnap] = useState({});
+	const [lastSnap, setLastSnap] = useState({});
+	const [page, setPage] = useState(1);
 
 	const pica = require('pica')()
 
-	const createRecordTable = (record) => {
+	const createRecordTable = (record, i_) => {
 		let row_span = 3
 		let label_num = 0
 		if (record.labels !== undefined) {
@@ -84,7 +87,7 @@ const ShowMaciene = () => {
 						console.log(field.includes('Image'))
 						console.log(record[field])
 						return field.includes('Image') ? (
-								<TableCell key={field} rowSpan={row_span}>
+								<TableCell key={`${field}-${i_}`} rowSpan={row_span}>
 									{record[field] !== undefined &&
 										<Box
 											component="img"
@@ -98,43 +101,43 @@ const ShowMaciene = () => {
 										/>
 									}
 								</TableCell>
-							) : (
-								<TableCell key={field} rowSpan={row_span}/>
+							) :  field !== 'labels' && (
+								<TableCell key={`${field}-${i_}`}  rowSpan={row_span}/>
 						)
 					})}
 					{record['labels'] !== undefined ?
-							<TableCell key='label1' sx={{ verticalAlign: 'top' }}>
+							<TableCell key={`'label1'-${i_}`} sx={{ verticalAlign: 'top' }}>
 								<Box sx={{ display: 'flex', alignItems: 'center'}}>
-									{record['labels'][0]}
 									<Box
 										sx={{
 											width: 16,
 											height: 16,
-											bgcolor: 'red',
-											ml: 1, // テキストとの間隔
+											bgcolor: record['labelColors'][0],
+											mr: 1, // テキストとの間隔
 										}}
 									/>
+									{record['labels'][0]}
 								</Box>
 							</TableCell>
 						:
-							<TableCell key='label1' sx={{ verticalAlign: 'top' }}/>
+							<TableCell key={`'label1'-${i_}`} sx={{ verticalAlign: 'top' }}/>
 					}
 				</TableRow>
 				{[...Array(row_span-1)].map((_, index) => {
 					return (
 						<TableRow role="checkbox">
-							<TableCell key="lavel2" sx={{ verticalAlign: 'top' }}>
+							<TableCell key={"lavel"+String(index+2)+'-'+i_} sx={{ verticalAlign: 'top' }}>
 								{(record['labels'] !== undefined && label_num > index+1) &&
 									<Box sx={{ display: 'flex', alignItems: 'center'}}>
-										{record['labels'][index+1]}
 										<Box
 											sx={{
 												width: 16,
 												height: 16,
-												bgcolor: 'red',
-												ml: 1, // テキストとの間隔
+												bgcolor: record['labelColors'][index+1],
+												mr: 1, // テキストとの間隔
 											}}
 										/>
+										{record['labels'][index+1]}
 									</Box>
 								}
 							</TableCell>
@@ -145,19 +148,43 @@ const ShowMaciene = () => {
 		)
 	}
 
-	useEffect(() => {
-		(async () => {
-			// console.log(React.version)
-			setDisabled(true)
-			console.log(disabled)
-
-			let demo_ref = await collection(db,'DemoDetection')
-			let demo_q = await query(demo_ref)//, orderBy("created_at", "desc"))//, firestore.limit(3))
-			let demoData = await getDocs(demo_q)
-			let in_dic = {}
-			let in_ids = []
-			let updateData = []
+	const awaitPaging = async(type_name) => {
+		let demo_ref = await collection(db,'DemoDetection')
+		let demo_q;
+		let demoData;
+		let page_next = page;
+		if (type_name === 'initialize') {
+			demo_q = await query(demo_ref, orderBy("upImageTime", "desc"), limit(recordByPage))
+			demoData = await getDocs(demo_q)
+			page_next = 1
+		} else if (type_name === 'endBefore') {
+			demo_q = await query(demo_ref, orderBy("upImageTime", "desc"), endBefore(firstSnap), limitToLast(recordByPage))
+			demoData = await getDocs(demo_q)
+			page_next -= 1
+			if (page_next < 1) {
+				page_next = 1
+			}
 			if (demoData.docs !== undefined) {
+				if (demoData.docs.length < recordByPage && 0 < demoData.docs.length) {
+					console.log('initialize endBefore!')
+					console.log(demoData.docs.length)
+					demo_q = await query(demo_ref, orderBy("upImageTime", "desc"), limit(recordByPage))
+					demoData = await getDocs(demo_q)
+				}
+			}
+		} else if (type_name === 'startAfter') {
+			page_next += 1
+			demo_q = await query(demo_ref, orderBy("upImageTime", "desc"), startAfter(lastSnap), limit(recordByPage))
+			demoData = await getDocs(demo_q)
+		}
+		let in_dic = {...dic}
+		let in_ids = []
+		let updateData = []
+		if (demoData.docs !== undefined) {
+			if (demoData.docs.length > 0) {
+				const firstSnap_next = demoData.docs[0];
+				const lastSnap_next = demoData.docs[demoData.docs.length - 1];
+				const awaitGetJson = await httpsCallable(function_ini, 'getJson', { timeout: 550 * 1000 });
 				const topPromises = await demoData.docs.map(async (doc) => {
 					let in_data = doc.data()
 					console.log(in_data)
@@ -167,15 +194,47 @@ const ShowMaciene = () => {
 						if (in_data[field] === undefined) {
 							console.log('getFine',field,storages[field])
 							console.log(in_data.fileName)
-							const storageRef = ref(storage, `${storages[field]}/${in_data.fileName}`);
-							console.log(storageRef)
 							try {
-								in_data[field] = await getDownloadURL(storageRef)
-								console.log(in_data[field])
+								let storageRef;
+								let down_data;
+								if (field.includes('Image')) {
+									storageRef = ref(storage, `${storages[field]}/${in_data.fileName}`);
+									down_data = await getDownloadURL(storageRef)
+									in_data[field] = down_data
+								} else {
+									console.log(`get ${storages[fields[1]]}/${in_data.fileName.split('.')[0]}.json`)
+									await awaitGetJson({name: `${in_data.fileName.split('.')[0]}.json`}).then(async (result) => {
+										let mes = result['data']
+										console.log(mes)
+										if (mes.success !== undefined) {
+											let dic_ = mes.success;
+											let labels = []
+											let colors = []
+											Object.keys(dic_).map((label) => {
+												labels.push(label)
+												colors.push(dic_[label])
+											})
+											in_data['labels'] = labels
+											in_data['labelColors'] = colors
+										}
+									})
+								}
+								console.log(storageRef)
 								updateData.push(in_data)
 							} catch (e) {
 								console.log(e)
 							}
+							//} else if (field === 'labels') {
+								// const url = `https://storage.googleapis.com/myproducts-488109.firebasestorage.app/detectedImages/${in_data.fileName.split('.')[0]}.json`;
+								// console.log(url)
+								// try {
+								// 	const response = await fetch(url);
+								// 	const data = await response.json();
+								// 	console.log(data)
+								// } catch (e) {
+								// 	console.log(e)
+								// }
+							// }
 						}
 					});
 
@@ -196,9 +255,24 @@ const ShowMaciene = () => {
 
 				console.log(in_ids)
 				console.log(in_dic)
+				console.log(page_next)
+				setPage(page_next)
+				setFirstSnap(firstSnap_next)
+				setLastSnap(lastSnap_next)
 				setDicIds(in_ids)
 				setDic(in_dic)
 			}
+		}
+	}
+
+	useEffect(() => {
+		(async () => {
+			// console.log(React.version)
+			setDisabled(true)
+			console.log(disabled)
+
+			await awaitPaging('initialize');
+			
 			setDisabled(false)
 		})();
 	}, []);
@@ -350,7 +424,7 @@ const ShowMaciene = () => {
 				<div>
 					<Button
 						variant="contained"
-						endIcon={<CameraAltIcon />}
+						endIcon={<CameraAlt />}
 					>
 						<input
 							type="file"
@@ -365,7 +439,7 @@ const ShowMaciene = () => {
 						<Button
 							className='rotate-icon'
 							onClick={rotateImage}
-							endIcon={<ReplayOutlinedIcon />}
+							endIcon={<ReplayOutlined />}
 						>
 							画像を右回転
 						</Button>
@@ -387,6 +461,33 @@ const ShowMaciene = () => {
 						</Button>
 					:
 						<Paper sx={{ width: '100%', overflow: 'hidden', marginTop: '3px' }}>
+							<Pagination
+								count={page}
+								page={page}
+								renderItem={(item) => {
+									if (item.type === "page" && item.page !== page) {
+										return null;
+									}
+									return (
+										<PaginationItem
+											slots={{ previous: ArrowBack, next: ArrowForward }}
+											{...item}
+											disabled={false}
+											onClick={async() => {
+												setDisabled(true)
+												if (item.type === "previous") {
+													await awaitPaging('endBefore')
+												} else if (item.type === "next") {
+													await awaitPaging('startAfter')
+												}
+												setDisabled(false)
+											}}
+										/>
+									)
+								}}
+								showFirstButton={false}
+								showLastButton={false}
+							/>
 							<TableContainer sx=
 								{{
 									maxHeight: 440,
@@ -395,7 +496,7 @@ const ShowMaciene = () => {
 									marginLeft: 'auto',
 									marginRight: 'auto'
 								}}
-								>
+							>
 								<Table stickyHeader aria-label="sticky table">
 									<TableHead>
 										<TableRow>
@@ -410,7 +511,7 @@ const ShowMaciene = () => {
 									</TableHead>
 									<TableBody>
 
-										<TableRow role="checkbox">
+										{/* <TableRow role="checkbox">
 											<TableCell rowSpan={3}>
 												<Box
 													component="img"
@@ -479,12 +580,12 @@ const ShowMaciene = () => {
 													/>
 												</Box>
 											</TableCell>
-										</TableRow>
+										</TableRow> */}
 
 										{dicIds.map((id) => {
 											console.log('draw')
 											console.log(dic[id])
-											return createRecordTable(dic[id])
+											return createRecordTable(dic[id], id)
 										})}
 
 									</TableBody>

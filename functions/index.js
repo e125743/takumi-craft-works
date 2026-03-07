@@ -137,6 +137,33 @@ exports.updateStore = onCall(
         }
 })
 
+
+exports.getJson = onCall(
+    {
+        // リクエスト出来るドメインを制限
+        cors: ["https://myproducts-488109.web.app", "https://myproducts-488109.firebaseapp.com", "http://localhost:3000"],
+        // AppCheck（認証されたドメインから以外のリクエストを拒否）
+        enforceAppCheck: true
+    },
+    async (data) => {
+        try {
+            console.log('start awaitGetJson')
+            let name = data.data.name
+            const file = admin
+                    .storage()
+                    .bucket()
+                    .file(`${photoPaths[1]}/${name}`)
+            const [buffer] = await file.download();
+            const text = buffer.toString("utf8");
+            const jsonData = JSON.parse(text);
+
+            console.log(jsonData);
+            return {'success': jsonData}
+        } catch (error) {
+            return {'failed': error}
+        }
+})
+
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
 
