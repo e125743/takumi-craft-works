@@ -109,7 +109,7 @@ exports.uploadImage = onCall(
             dic_['fileName'] = fileName
             dic_[photoPaths[0]] = true
             await awaitInsertFirestore(dic_, 'DemoDetection', fileName)
-            return {message: 'success'}
+            return {'success': fileName}
         } catch (error) {
             console.log(error)
             return {message: 'uploadError'}
