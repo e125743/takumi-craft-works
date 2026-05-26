@@ -25,3 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 
 **/*.jpg
+
+# security notes (must never be committed — see ../SECURITY-NOTES.md)
+SECURITY-NOTES.md
+**/SECURITY-NOTES.md
