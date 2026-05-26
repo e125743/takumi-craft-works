@@ -1,7 +1,7 @@
 import getFirebaseIni from '../firebase';
 import {ReplayOutlined, CameraAlt, ArrowBack, ArrowForward, Storage, SmartToy, LaptopMac, DownloadForOffline} from '@mui/icons-material';
 import { Button, Box, Pagination, PaginationItem, Grid } from '@mui/material';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import Loading from '../components/Loading';
 // import {Jimp} from 'jimp';
@@ -594,7 +594,21 @@ const ShowMaciene = () => {
 							}
 						}}
 					>
-						<p>画像を保存</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>
+							画像を保存
+						</Typography>
 						<Box
 							alignItems="center"
 							sx={{
@@ -621,7 +635,22 @@ const ShowMaciene = () => {
 							/>
 							<Storage sx={{ fontSize: "6vw"}} />
 						</Box>
-						<p>Storage</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+								mb: '10px'
+							}}
+						>
+							Storage
+						</Typography>
 					</Grid>
 					<Grid
 						size={{xs: 3, sm:1}}
@@ -633,7 +662,19 @@ const ShowMaciene = () => {
 							}
 						}}
 					>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -651,7 +692,19 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 					</Grid>
 					<Grid size={{xs: 3, sm:1}} item sx={{
 							flexShrink: {
@@ -659,7 +712,22 @@ const ShowMaciene = () => {
 								sm: 1
 							}
 						}}>
-						<p>通知送信</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+							}}
+						>
+							通知送信
+						</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -677,7 +745,23 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p>Eventarc</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+								mb: '10px'
+							}}
+						>
+							Eventarc
+						</Typography>
 					</Grid>
 					<Grid size={{xs: 3, sm:1}} item sx={{
 							flexShrink: {
@@ -685,7 +769,19 @@ const ShowMaciene = () => {
 								sm: 1
 							}
 						}}>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -703,7 +799,19 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 					</Grid>
 					<Grid
 						size={{xs: 3, sm:2}}
@@ -715,7 +823,22 @@ const ShowMaciene = () => {
 							}
 						}}
 					>
-						<p>学習機で検出</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+							}}
+						>
+							学習機で検出
+						</Typography>
 						<Box
 							alignItems="center"
 							sx={{
@@ -742,7 +865,23 @@ const ShowMaciene = () => {
 							/>
 							<SmartToy sx={{ fontSize: "6vw"}} />
 						</Box>
-						<p>CloudRun</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+								mb: '10px'
+							}}
+						>
+							CloudRun
+						</Typography>
 					</Grid>
 					<Grid
 						size={{xs: 2, sm:1}}
@@ -754,7 +893,19 @@ const ShowMaciene = () => {
 							}
 						}}
 					>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -772,7 +923,19 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 					</Grid>
 					<Grid size={{xs: 2, sm:1}} item sx={{
 							flexShrink: {
@@ -780,7 +943,22 @@ const ShowMaciene = () => {
 								sm: 1
 							}
 						}}>
-						<p>Webに送信</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+							}}
+						>
+							Webに送信
+						</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -798,7 +976,23 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p>　</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+								mb: '10px'
+							}}
+						>
+							　
+						</Typography>
 					</Grid>
 					<Grid size={{xs: 2, sm:1}} item sx={{
 							flexShrink: {
@@ -806,7 +1000,19 @@ const ShowMaciene = () => {
 								sm: 1
 							}
 						}}>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 						<Box
 							sx={{
 								display: "flex",
@@ -824,13 +1030,40 @@ const ShowMaciene = () => {
 								}}
 							/>
 						</Box>
-						<p></p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>　</Typography>
 					</Grid>
 					<Grid
 						size={{xs: 3, sm:2}}
 						item
 					>
-						<p>以下に表示</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+							}}
+						>
+							以下に表示
+						</Typography>
 						<Box
 							alignItems="center"
 							sx={{
@@ -857,7 +1090,23 @@ const ShowMaciene = () => {
 							/>
 							<LaptopMac sx={{ fontSize: "6vw"}} />
 						</Box>
-						<p>Web</p>
+						<Typography
+							variant="body1"
+							noWrap
+							// href="#app-bar-with-responsive-menu"
+							sx={{
+								// display: 'flex',
+								// fontFamily: 'Comic Sans MS',
+								// fontWeight: 700,
+								// letterSpacing: '.3rem',
+								color: 'inherit',
+								overflow: 'visible',
+								textDecoration: 'none',
+								mb: '10px'
+							}}
+						>
+							Web
+						</Typography>
 					</Grid>
 				</Grid>
 				{!disabled ? 
@@ -868,7 +1117,7 @@ const ShowMaciene = () => {
 								onClick={async () => {
 										await downloadFolder();
 									}}
-								sx={{marginBottom: '5px'}}
+								sx={{my: '5px'}}
 								endIcon={<DownloadForOffline />}
 							>
 								Sample取得

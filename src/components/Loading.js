@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import {TailSpin} from 'react-loader-spinner';
 
 const Loading = ({width}) => {
