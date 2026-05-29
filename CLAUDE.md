@@ -3,7 +3,7 @@
 ## このファイルの責任範囲
 
 React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関する事項を扱います。
-横断的なルール (本番直結 / Git ワークフロー / CLAUDE.md 更新ルール / アーキテクチャ全体) は `../CLAUDE.md` を、Cloud Run (`mlModelCore`) の詳細は `../mlModelCore/CLAUDE.md` を参照してください。
+横断的なルール (本番直結 / Git ワークフロー / CLAUDE.md 更新ルール / アーキテクチャ全体) は `../CLAUDE.md` を (Git 手順の詳細は `../docs/GIT-WORKFLOW.md`)、Cloud Run (`mlModelCore`) の詳細は `../mlModelCore/CLAUDE.md` を参照してください。
 
 ---
 
@@ -92,10 +92,11 @@ npm run build
 
 ### デプロイ (必ずユーザーの事前承認が必要)
 ```bash
-# Hosting デプロイ
+# Hosting デプロイ (predeploy フック無し → 先に build/ を最新化)
+npm run build
 firebase deploy --only hosting
 
-# Functions デプロイ
+# Functions デプロイ (build/ 非依存 → ビルド不要)
 firebase deploy --only functions
 # 特定の関数のみ
 firebase deploy --only functions:uploadImage
@@ -156,10 +157,10 @@ Firestore データ・Storage オブジェクトの確認は **Firebase コン�
 - このファイル (`takumi-craft-works/CLAUDE.md`) の「主要ファイル」、必要なら「改名禁止リスト」
 
 ### このタスクで使うデプロイコマンド
-- `firebase deploy --only hosting`
+- `npm run build` → `firebase deploy --only hosting` (Hosting は predeploy フック無し。build/ を最新化してから配信)
 
-→ 以降は `../CLAUDE.md` の **Git ワークフロー** に沿って進めます:
-   `npm start` ローカル確認 → commit → 上記デプロイ → 本番動作確認 → push → main へ merge → feature ブランチ削除。
+→ 以降は `../CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../docs/GIT-WORKFLOW.md` に沿って進めます:
+   `npm start` ローカル確認 → commit → **`npm run build`** → 上記デプロイ → 本番動作確認 → push → main へ merge → feature ブランチ削除。
    CLAUDE.md 更新分はコード変更とは別 commit で同じく main へ反映。
 
 ---
@@ -183,6 +184,6 @@ Firestore データ・Storage オブジェクトの確認は **Firebase コン�
 ### このタスクで使うデプロイコマンド
 - `firebase deploy --only functions:関数名`
 
-→ 以降は `../CLAUDE.md` の **Git ワークフロー** に沿って進めます:
-   ローカル確認 (Functions エミュレータ or `npm start` + App Check デバッグトークン) → commit → 上記デプロイ → 本番動作確認 → push → main へ merge → feature ブランチ削除。
+→ 以降は `../CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../docs/GIT-WORKFLOW.md` に沿って進めます:
+   ローカル確認 (Functions エミュレータ or `npm start` + App Check デバッグトークン) → commit → 上記デプロイ (Functions は build 非依存) → 本番動作確認 → push → main へ merge → feature ブランチ削除。
    CLAUDE.md 更新分はコード変更とは別 commit で同じく main へ反映。
