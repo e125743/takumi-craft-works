@@ -79,6 +79,19 @@ Storage プレフィックス (`origineImages` / `detectedImages`) は `mlModelC
 
 ---
 
+## コンテンツ／文言の指針 → ../docs/CONTENT-GUIDE.md
+
+トップページや実績・自己紹介のコピー作成・文言修正・セクション/ページ追加など
+**掲載内容に関わる変更**を行う時は [../docs/CONTENT-GUIDE.md](../docs/CONTENT-GUIDE.md) を読む。
+掲載素材の確定情報（経歴・実績・技術スタック・連絡先・論文出典）と、伝えたい印象に沿った
+文言指針・載せない表現をまとめてある。
+
+- このファイルは **Git 管理外（Private）** で本リポジトリ外（`my-portfolio/docs/`）にある。
+  Public リポジトリには含まれないため、clone 環境ではリンクが解決しないことがある。
+- 評価軸の原典は `../CLAUDE.md`「プロダクトの目的・ターゲット」。
+
+---
+
 ## ローカル開発コマンド (Claude が自由に実行可能)
 
 ```bash
