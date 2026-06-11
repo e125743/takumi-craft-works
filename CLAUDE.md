@@ -11,7 +11,7 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 
 | 対象 | 要件 |
 |---|---|
-| Node.js | CRA 5 が要求するため **16 以上 (18 推奨)** |
+| Node.js | Vite 8 が要求するため **20.19 以上 または 22.12 以上** |
 | `firebase-tools` CLI | `firebase deploy` / `firebase functions:log` 用 |
 
 ローカルで `/showmaciene` の全機能 (Functions 経由のアップロード等) を試したい場合は、**App Check デバッグトークン**を Firebase コンソールに登録する必要があります (詳細は下記セキュリティ既知事項の CORS 項目参照)。
@@ -22,13 +22,17 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 
 | パス | 役割 |
 |---|---|
-| `src/App.js` | ルーティング (`/` Home, `/showmaciene` ShowMaciene) |
+| `index.html` | Vite のエントリ HTML (ルート直下)。`/src/index.jsx` を読み込む |
+| `vite.config.js` | Vite 設定。`build.outDir = 'build'` で出力先を Hosting と一致させる |
+| `jsconfig.json` | パスエイリアス `@/*` → `src/*`（将来の shadcn/ui 用の布石） |
+| `src/index.jsx` | エントリ。`ReactDOM.createRoot` で App をマウント |
+| `src/App.jsx` | ルーティング (`/` Home, `/showmaciene` ShowMaciene)。ShowMaciene は `React.lazy` + `Suspense` で遅延読込 |
 | `src/firebase.js` | Firebase 初期化 + App Check (reCAPTCHA v3) |
-| `src/pages/Home.js` | トップページ。`/showmaciene` への画像リンクのみ |
-| `src/pages/ShowMaciene.js` | メイン機能。画像アップロード + 検出結果のページング表示 |
-| `src/pages/index.js` | barrel エクスポート |
-| `src/components/Header.js` | グローバルナビ。`pages` 配列でメニュー項目を管理 |
-| `src/components/Loading.js` | ローディング表示 |
+| `src/pages/Home.jsx` | トップページ。`/showmaciene` への画像リンクのみ |
+| `src/pages/ShowMaciene.jsx` | メイン機能。画像アップロード + 検出結果のページング表示 |
+| `src/pages/index.js` | barrel エクスポート（Home のみ。ShowMaciene は App で直接 lazy import） |
+| `src/components/Header.jsx` | グローバルナビ。`pages` 配列でメニュー項目を管理 |
+| `src/components/Loading.jsx` | ローディング表示 |
 | `src/components/index.js` | barrel エクスポート |
 | `functions/index.js` | Callable Functions: `uploadImage` / `updateStore` / `getJson` |
 | `firebase.json` | Hosting (SPA rewrite) + Functions 設定 |
@@ -39,7 +43,9 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 ## コーディング規約・注意点
 
 ### 言語・フレームワーク
-- **JavaScript** (TypeScript 未使用) / **React 19** / **MUI v7** / **CRA 5** / **react-router-dom v7**
+- **JavaScript/JSX** (TypeScript 未使用) / **React 19** / **MUI v7** / **Vite 8** / **react-router-dom v7**
+- **拡張子の使い分け**: JSX を含むファイルは `.jsx`、JSX を含まない素の JS (barrel `index.js` / `firebase.js` / `setupTests.js`) は `.js`。Vite 8 (Rolldown) は `.js` 内の JSX をパースしないため、新規で JSX を書くファイルは必ず `.jsx`（将来 TS 化する場合は `.tsx`）にする。
+- 開発/ビルド: `npm start` (= `vite`) / `npm run build` (= `vite build`, 出力 `build/`)。古い `react-scripts` は撤去済み。
 - スタイリングは MUI の `sx` prop 中心。グローバル CSS は `src/App.css`, `src/index.css`
 
 ### 設定・セキュリティ
@@ -48,8 +54,9 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 - **公開キー**: `firebaseConfig` (apiKey 含む) と reCAPTCHA サイトキーはクライアント公開キーなのでハードコード可。
 
 ### 既知の挙動 (触らない方が無難)
-- `src/firebase.js` と `src/pages/ShowMaciene.js` の両方で App Check を初期化している (重複だが動作している)。
-- `ShowMaciene.js` 内で `window.Buffer = window.Buffer || Buffer` をしている (Canvas 処理に必要)。
+- `src/firebase.js` と `src/pages/ShowMaciene.jsx` の両方で App Check を初期化している (重複だが動作している)。
+- `ShowMaciene.jsx` 内で `window.Buffer = window.Buffer || Buffer` をしている (Canvas 処理に必要)。
+- `ShowMaciene.jsx` の `pica` は ESM import (`import Pica from 'pica'; const pica = Pica()`)。CRA 時代の `require('pica')` は Vite では動かないため変換済み。
 
 ---
 
@@ -60,7 +67,7 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 | 識別子 | 種類 | 結合先 |
 |---|---|---|
 | `/showmaciene` | ルートパス | 本番 URL / Header のリンク |
-| `ShowMaciene` | コンポーネント名 | `src/pages/index.js` の export |
+| `ShowMaciene` | コンポーネント名 | `src/App.jsx` の `lazy(() => import('./pages/ShowMaciene'))` (default export) |
 | `DemoDetection` | Firestore コレクション | `functions/index.js` 全 Callable |
 | `origineImages` | Storage プレフィックス | `functions/index.js` ＋ `mlModelCore/main.py` (両方共通) |
 | `detectedImages` | Storage プレフィックス | `functions/index.js` ＋ `mlModelCore/main.py` (両方共通) |
