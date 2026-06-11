@@ -43,10 +43,10 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 ## コーディング規約・注意点
 
 ### 言語・フレームワーク
-- **JavaScript/JSX** (TypeScript 未使用) / **React 19** / **MUI v7** / **Vite 8** / **react-router-dom v7**
+- **JavaScript/JSX** (TypeScript 未使用) / **React 19** / **MUI v7 + Tailwind v4 (移行中・共存)** / **Vite 8** / **react-router-dom v7**
 - **拡張子の使い分け**: JSX を含むファイルは `.jsx`、JSX を含まない素の JS (barrel `index.js` / `firebase.js` / `setupTests.js`) は `.js`。Vite 8 (Rolldown) は `.js` 内の JSX をパースしないため、新規で JSX を書くファイルは必ず `.jsx`（将来 TS 化する場合は `.tsx`）にする。
 - 開発/ビルド: `npm start` (= `vite`) / `npm run build` (= `vite build`, 出力 `build/`)。古い `react-scripts` は撤去済み。
-- スタイリングは MUI の `sx` prop 中心。グローバル CSS は `src/App.css`, `src/index.css`
+- スタイリングは現状 **MUI の `sx` prop 中心**。**Tailwind v4 のユーティリティも併用可**（MUI → shadcn/ui への段階移行中）。グローバル CSS は `src/index.css`（Tailwind の読込口）, `src/App.css`
 
 ### 設定・セキュリティ
 - **CORS 許可ドメイン**は `functions/index.js` の各 `onCall` 呼び出しに**手書きで列挙**されています。新ドメインを追加する時は全 Function 定義を更新する必要があります。
@@ -57,6 +57,8 @@ React SPA (`src/`)、Firebase Hosting、Firebase Functions (`functions/`) に関
 - `src/firebase.js` と `src/pages/ShowMaciene.jsx` の両方で App Check を初期化している (重複だが動作している)。
 - `ShowMaciene.jsx` 内で `window.Buffer = window.Buffer || Buffer` をしている (Canvas 処理に必要)。
 - `ShowMaciene.jsx` の `pica` は ESM import (`import Pica from 'pica'; const pica = Pica()`)。CRA 時代の `require('pica')` は Vite では動かないため変換済み。
+- **Tailwind v4 は preflight (base リセット) を無効化して導入**。`src/index.css` で `tailwindcss/theme.css` と `tailwindcss/utilities.css` のみ読込し `preflight.css` は読まない。MUI と既存 CSS の土台を保持するため。**MUI を全撤去した後に preflight 再有効化**を判断する暫定状態（shadcn/ui 導入＝手順3）。
+- CSS レイヤ優先順位: Tailwind ユーティリティは `@layer utilities` 内、MUI(emotion) はレイヤ無しで注入されるため、同一要素・同一プロパティの競合では **MUI が勝つ**。Tailwind で MUI を上書きしたい場合は `StyledEngineProvider enableCssLayer` での MUI レイヤ化が必要。
 
 ---
 
