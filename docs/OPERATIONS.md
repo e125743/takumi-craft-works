@@ -8,7 +8,7 @@
 
 ```bash
 # Hosting デプロイ (predeploy フック無し → 先に build/ を最新化)
-npm run build
+npm run build           # = vite build。出力先は build/ (vite.config.js の build.outDir)
 firebase deploy --only hosting
 
 # Functions デプロイ (build/ 非依存 → ビルド不要)
@@ -55,12 +55,18 @@ Firestore データ・Storage オブジェクトの確認は **Firebase コン�
 ## 新規ページ追加の手順
 
 ### コード変更
-1. `src/pages/NewPage.js` を作成 (既存ページのスタイルを踏襲)
+1. `src/pages/NewPage.jsx` を作成 (JSX を含むので拡張子は **`.jsx`**。既存ページのスタイルを踏襲)
 2. `src/pages/index.js` に `export {default as NewPage} from './NewPage';` を追加
-3. `src/App.js` の `<Routes>` に `<Route path="/newpage" element={<NewPage/>} />` を追加
-4. `src/components/Header.js` の `pages` 配列に `{name:'NewPage', path:'/newpage'}` を追加
+3. `src/App.jsx` の `<Routes>` に `<Route path="/newpage" element={<NewPage/>} />` を追加
+4. `src/components/Header.jsx` の `pages` 配列に `{name:'NewPage', path:'/newpage'}` を追加
 5. 共通コンポーネントが必要なら `src/components/` に追加し `components/index.js` の export に追記
 6. 新ドメインを使う場合: `functions/index.js` の各 Function の `cors` 配列にも追記
+
+> **重い画面 (firebase / 画像処理ライブラリ等を取り込む) は遅延読込にする**: `App.jsx` で
+> `const NewPage = lazy(() => import('./pages/NewPage'))` とし `<Suspense>` 配下に置く
+> (ShowMaciene と同じパターン)。その場合、**barrel `pages/index.js` には載せない** —
+> 静的 export が残ると分割が無効化される (Rolldown の `INEFFECTIVE_DYNAMIC_IMPORT`)。
+> 軽い静的ページは従来どおり barrel + 即時 import で良い。
 
 ### この変更で更新すべき CLAUDE.md
 - `takumi-craft-works/CLAUDE.md` の「主要ファイル」、必要なら「改名禁止リスト」
