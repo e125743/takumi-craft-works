@@ -1,3 +1,10 @@
+/* Tailwind v4: preflight(base リセット) を読み込まない構成。
+   MUI コンポーネントと既存 CSS の土台を保持したまま utilities / theme だけ利用する。
+   MUI を全撤去後に preflight を再有効化する想定（手順3/shadcn 導入時に判断）。 */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
