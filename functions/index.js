@@ -23,6 +23,7 @@ const { onCall } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
 admin.initializeApp();
+const { randomUUID } = require("crypto");
 
 const photoPaths = ['origineImages', 'detectedImages']
 
@@ -37,7 +38,7 @@ const photoPaths = ['origineImages', 'detectedImages']
 // In the v1 API, each function can only serve one request per container, so
 // this will be the maximum concurrent request count.
 
-async function awaitUploadImage(image, name, photoPath) {
+async function awaitUploadImage(image, name, photoPath, token) {
     try {
         console.log('start awaitUploadImage')
         const file = admin
@@ -60,7 +61,12 @@ async function awaitUploadImage(image, name, photoPath) {
         console.log('image_buffer:', ((Date.now() - time) / (1000*60)).toString());
 
         time = Date.now()
-        await file.save(imageBuffer_load, { metadata: { contentType: 'image/jpeg' } })
+        await file.save(imageBuffer_load, {
+            metadata: {
+                contentType: 'image/jpeg',
+                metadata: { firebaseStorageDownloadTokens: token }   // 固定DLトークン（カスタムメタデータ）
+            }
+        })
         return {message: 'success'}
     } catch (error) {
         console.log(error)
@@ -101,12 +107,14 @@ exports.uploadImage = onCall(
         try {
             let ref = await admin.firestore().collection('DemoDetection').doc()
             let fileName = ref.id + '.jpg'
+            let downloadToken = randomUUID()                                  // per-upload 固定トークン
             console.log('start uploadImage')
             let dic_ = data.data
             console.log(dic_)
-            await awaitUploadImage(dic_['image'], fileName, photoPaths[0])
+            await awaitUploadImage(dic_['image'], fileName, photoPaths[0], downloadToken)  // origine にトークン付与
             delete dic_['image']
             dic_['fileName'] = fileName
+            dic_['downloadToken'] = downloadToken                             // クライアント/CloudRun が参照
             dic_[photoPaths[0]] = true
             await awaitInsertFirestore(dic_, 'DemoDetection', fileName)
             return {'success': fileName}
