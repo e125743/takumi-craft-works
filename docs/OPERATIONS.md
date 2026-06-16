@@ -2,7 +2,7 @@
 
 > `takumi-craft-works/CLAUDE.md` から参照される手順本体。
 > デプロイ / ログ確認 / ロールバック / 新規ページ追加 / 新規 Function 追加 のいずれかを行う時に読む。
-> 承認制コマンド (deploy / push / merge) と全体フローは `../../CLAUDE.md`（要点）+ `../../docs/GIT-WORKFLOW.md`（詳細）に従う。
+> 承認制コマンド (deploy / push / merge) と全体フローは `../../docs/CLAUDE.md`（要点）+ `../../docs/GIT-WORKFLOW.md`（詳細）に従う。
 
 ## デプロイ (必ずユーザーの事前承認が必要)
 
@@ -74,7 +74,7 @@ Firestore データ・Storage オブジェクトの確認は **Firebase コン�
 ### このタスクで使うデプロイコマンド
 - `npm run build` → `firebase deploy --only hosting` (Hosting は predeploy フック無し。build/ を最新化してから配信)
 
-→ 以降は `../../CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../../docs/GIT-WORKFLOW.md` に沿って進めます:
+→ 以降は `../../docs/CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../../docs/GIT-WORKFLOW.md` に沿って進めます:
    `npm start` ローカル確認 → commit → **`npm run build`** → 上記デプロイ → 本番動作確認 → push → main へ merge → feature ブランチ削除。
    CLAUDE.md 更新分はコード変更とは別 commit で同じく main へ反映。
 
@@ -97,6 +97,6 @@ Firestore データ・Storage オブジェクトの確認は **Firebase コン�
 ### このタスクで使うデプロイコマンド
 - `firebase deploy --only functions:関数名`
 
-→ 以降は `../../CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../../docs/GIT-WORKFLOW.md` に沿って進めます:
+→ 以降は `../../docs/CLAUDE.md` の **Git ワークフロー（要点）** と詳細手順 `../../docs/GIT-WORKFLOW.md` に沿って進めます:
    ローカル確認 (Functions エミュレータ or `npm start` + App Check デバッグトークン) → commit → 上記デプロイ (Functions は build 非依存) → 本番動作確認 → push → main へ merge → feature ブランチ削除。
    CLAUDE.md 更新分はコード変更とは別 commit で同じく main へ反映。

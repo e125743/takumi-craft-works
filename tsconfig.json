@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    /* JS(.jsx) と TS(.tsx) の共存: JS は許可するが型チェックはしない */
+    "allowJs": true,
+    "checkJs": false,
+
+    /* .tsx は厳格に型推論・型チェック */
+    "strict": true,
+
+    /* 型チェック専用（emit は Vite が担当） */
+    "noEmit": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    /* shadcn / 自前コードの @/ alias をエディタ・tsc が解決（TS6: baseUrl 無しで paths は tsconfig 位置基準） */
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src"]
+}
